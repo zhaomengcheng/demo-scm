@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aowin.dao.SoItemDao">
+
+    <resultMap id="SoItemResultMap" type="com.aowin.pojo.SoItem">
+        <result property="soId" column="soId"/>
+        <result property="productCode" column="productCode"/>
+        <result property="unitName" column="unitName"/>
+        <result property="unitPrice" column="unitPrice"/>
+        <result property="num" column="num"/>
+        <result property="itemPrice" column="itemPrice"/>
+    </resultMap>
+
+
+    <insert id="insert">
+        insert into soItem(soId,productCode,unitName,unitPrice,num,itemPrice) values(#{soId},#{productCode},#{unitName},#{unitPrice},#{num},#{itemPrice})
+    </insert>
+    <delete id="delete">
+        delete from soItem where soId = #{soId}
+    </delete>
+    <select id="getSoItems" resultMap="SoItemResultMap">
+        select * from soItem where soId =#{soId}
+    </select>
+</mapper>

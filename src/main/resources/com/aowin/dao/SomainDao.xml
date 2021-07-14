@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aowin.dao.SomainDao">
+
+    <resultMap id="SomainResultMap" type="com.aowin.pojo.Somain">
+        <result property="soId" column="soId"/>
+        <result property="name" column="name"/>
+        <result property="account" column="account"/>
+        <result property="createTime" column="createTime"/>
+        <result property="tipFee" column="tipFee"/>
+        <result property="productTotal" column="productTotal"/>
+        <result property="soTotal" column="soTotal"/>
+        <result property="payType" column="payType"/>
+        <result property="status" column="status"/>
+        <result property="prePayFee" column="prePayFee"/>
+        <result property="remark" column="remark"/>
+        <collection property="soItems" ofType="com.aowin.pojo.SoItem">
+            <result property="soId" column="soId"/>
+            <result property="productCode" column="productCode"/>
+            <result property="unitPrice" column="unitPrice"/>
+            <result property="num" column="num"/>
+            <result property="unitName" column="unitName"/>
+            <result property="itemPrice" column="itemPrice"/>
+        </collection>
+    </resultMap>
+    <resultMap id="SomainResultMap2" type="com.aowin.pojo.Somain">
+        <result property="soId" column="soId"/>
+        <result property="name" column="name"/>
+        <result property="account" column="account"/>
+        <result property="createTime" column="createTime"/>
+        <result property="tipFee" column="tipFee"/>
+        <result property="productTotal" column="productTotal"/>
+        <result property="soTotal" column="soTotal"/>
+        <result property="payType" column="payType"/>
+        <result property="status" column="status"/>
+        <result property="prePayFee" column="prePayFee"/>
+        <result property="remark" column="remark"/>
+        <collection property="soItems" ofType="com.aowin.pojo.SoItem">
+            <result property="soId" column="soId"/>
+            <result property="productCode" column="productCode"/>
+            <result property="productName" column="productName"/>
+            <result property="unitPrice" column="unitPrice"/>
+            <result property="num" column="num"/>
+            <result property="unitName" column="unitName"/>
+            <result property="itemPrice" column="itemPrice"/>
+        </collection>
+    </resultMap>
+    <resultMap id="OutStockResultMap" type="com.aowin.pojo.OutStock">
+        <result property="soId" column="soId"/>
+        <result property="name" column="name"/>
+        <result property="productCode" column="productCode"/>
+        <result property="num" column="num"/>
+        <result property="itemPrice" column="itemPrice"/>
+        <result property="stockTime" column="stockTime"/>
+    </resultMap>
+    <select id="countAll" resultType="int">
+        select count(*) from somain
+    </select>
+    <select id="countAll2" resultType="int">
+        select count(*) from somain where status=1
+    </select>
+    <select id="countEnd1" resultType="int">
+        select count(*) from somain where payType='货到付款' and status=3
+    </select>
+    <select id="countEnd2" resultType="int">
+        select count(*) from somain where payType='款到发货' and status=2
+    </select>
+    <select id="countEnd3" resultType="int">
+        select count(*) from somain where payType='预付款发货' and status=3
+    </select>
+    <select id="countOut1" resultType="int">
+        select count(*) from somain where payType='货到付款' and status=1
+    </select>
+    <select id="countOut2" resultType="int">
+        select count(*) from somain where payType='款到发货' and status=3
+    </select>
+    <select id="countOut3" resultType="int">
+        select count(*) from somain where payType='预付款发货' and status=5
+    </select>
+    <select id="countInMoney1" resultType="int">
+        select count(*) from somain where payType='货到付款' and status=2
+    </select>
+    <select id="countInMoney2" resultType="int">
+        select count(*) from somain where payType='款到发货' and status=1
+    </select>
+    <select id="countInMoney3" resultType="int">
+        select count(*) from somain where payType='预付款发货' and status in(1,2)
+    </select>
+    <select id="findAll" resultMap="SomainResultMap">
+        select p.soId,v.name,p.account,p.createTime,p.tipFee,p.productTotal,p.soTotal,p.payType,p.status from somain p,customer v where p.customercode=v.customercode limit #{first},#{max}
+    </select>
+    <select id="findAll2" resultMap="SomainResultMap">
+        select p.soId,v.name,p.account,p.createTime,p.tipFee,p.productTotal,p.soTotal,p.payType,p.status from somain p,customer v where p.customercode=v.customercode and p.status=1 limit #{first},#{max}
+    </select>
+    <select id="findEnd1" resultMap="SomainResultMap">
+        select p.soId,v.name,p.account,p.createTime,p.tipFee,p.productTotal,p.soTotal,p.payType,p.status from somain p,customer v where p.customercode=v.customercode and p.payType='货到付款' and p.status=3 limit #{first},#{max}
+    </select>
+    <select id="findEnd2" resultMap="SomainResultMap">
+        select p.soId,v.name,p.account,p.createTime,p.tipFee,p.productTotal,p.soTotal,p.payType,p.status from somain p,customer v where p.customercode=v.customercode and p.payType='款到发货' and p.status=2 limit #{first},#{max}
+    </select>
+    <select id="findEnd3" resultMap="SomainResultMap">
+        select p.soId,v.name,p.account,p.createTime,p.tipFee,p.productTotal,p.soTotal,p.payType,p.status from somain p,customer v where p.customercode=v.customercode and p.payType='预付款发货' and p.status=3 limit #{first},#{max}
+    </select>
+    <select id="findOut1" resultMap="SomainResultMap">
+        select p.soId,v.name,p.account,p.createTime,p.tipFee,p.productTotal,p.soTotal,p.payType,p.status from somain p,customer v where p.customercode=v.customercode and p.payType='货到付款' and p.status=1 limit #{first},#{max}
+    </select>
+    <select id="findOut2" resultMap="SomainResultMap">
+        select p.soId,v.name,p.account,p.createTime,p.tipFee,p.productTotal,p.soTotal,p.payType,p.status from somain p,customer v where p.customercode=v.customercode and p.payType='款到发货' and p.status=3 limit #{first},#{max}
+    </select>
+    <select id="findOut3" resultMap="SomainResultMap">
+        select p.soId,v.name,p.account,p.createTime,p.tipFee,p.productTotal,p.soTotal,p.payType,p.status from somain p,customer v where p.customercode=v.customercode and p.payType='预付款发货' and p.status=5 limit #{first},#{max}
+    </select>
+    <select id="findInMoney1" resultMap="SomainResultMap">
+        select p.soId,v.name,p.account,p.createTime,p.tipFee,p.productTotal,p.soTotal,p.payType,p.status from somain p,customer v where p.customercode=v.customercode and p.payType='货到付款' and p.status=2 limit #{first},#{max}
+    </select>
+    <select id="findInMoney2" resultMap="SomainResultMap">
+        select p.soId,v.name,p.account,p.createTime,p.tipFee,p.productTotal,p.soTotal,p.payType,p.status from somain p,customer v where p.customercode=v.customercode and p.payType='款到发货' and p.status=1 limit #{first},#{max}
+    </select>
+    <select id="findInMoney3" resultMap="SomainResultMap">
+        select p.soId,v.name,p.account,p.createTime,p.tipFee,p.productTotal,p.soTotal,p.payType,p.status from somain p,customer v where p.customercode=v.customercode and p.payType='预付款发货' and p.status in(1,2) limit #{first},#{max}
+    </select>
+    <select id="findSome" resultMap="SomainResultMap">
+        select p.soId,v.name,p.account,p.createTime,p.tipFee,p.productTotal,p.soTotal,p.payType,p.status,p.prePayFee from somain p,customer v where p.customercode=v.customercode
+        <if test="soId!=null and soId!=''">
+            <bind name="un" value="'%'+soId+'%'"/>
+            and p.soId like #{un}
+        </if>
+        <if test="status!=null and status!=''">
+            and p.status=#{status}
+        </if>
+        <if test="start!=null and start!=''">
+            and p.createTime between #{start}
+        </if>
+        <if test="end!=null and end!=''">
+            and #{end}
+        </if>
+    </select>
+    <insert id="insert">
+        insert into somain(soId,customercode,account,createTime,tipFee,productTotal,soTotal,payType,status,remark,prePayFee) values(#{soId},(select customerCode from customer where name=#{name}),#{account},#{createTime},#{tipFee},#{productTotal},#{soTotal},#{payType},#{status},#{remark},#{prePayFee})
+    </insert>
+    <select id="getSomain" resultMap="SomainResultMap">
+        select p.account,p.createTime,p.tipFee,p.productTotal,p.soTotal,p.payType,p.status,p.prePayFee,p.remark,(select name from customer where customercode=p.customercode)name,o.* from somain p,soitem o where p.soid=o.soid and p.status=1 and p.soId=#{soId}
+    </select>
+    <select id="getSomain2" resultMap="SomainResultMap2">
+        select (select name from product where productCode=o.productCode) productName,p.account,p.createTime,p.tipFee,p.productTotal,p.soTotal,p.payType,p.status,p.prePayFee,p.remark,(select name from customer where customercode=p.customercode)name,o.* from somain p,soitem o where p.soid=o.soid and p.status=1 and p.soId=#{soId}
+    </select>
+    <delete id="delete">
+        delete from somain where soId = #{soId}
+    </delete>
+    <update id="end">
+        update somain set endUser=#{endUser},endTime=#{endTime},status=4 where soId=#{soId}
+    </update>
+    <update id="out">
+        update somain set stockUser=#{stockUser},stockTime=#{stockTime},status=2 where soId=#{soId}
+    </update>
+    <update id="inMoney">
+        update somain set payUser=#{payUser},payTime=#{payTime},status=3 where soId=#{soId}
+    </update>
+    <update id="inMoney2">
+        update somain set prePayUser=#{payUser},prePayTime=#{payTime},status=5 where soId=#{soId}
+    </update>
+
+<!--出库-->
+    <insert id="insertSr">
+        insert into stockRecord(productCode,orderCode,stockNum,stockType,stockTime,createUser) values(#{productCode},#{orderCode},#{stockNum},2,#{stockTime},#{stockUser})
+    </insert>
+<!--    盘点出库-->
+    <insert id="insertSrC">
+        insert into stockRecord(productCode,orderCode,stockNum,stockType,stockTime,createUser) values(#{productCode},#{orderCode},#{stockNum},4,#{stockTime},#{stockUser})
+    </insert>
+
+    <insert id="insertPayC">
+        insert into payRecord(pay_time,pay_price,account,ordercode,pay_type) values(#{payTime},#{price},#{account},#{soId},1)
+    </insert>
+
+    <insert id="insertPayC2">
+        insert into payRecord(pay_time,pay_price,account,ordercode,pay_type) values(#{payTime},#{price},#{account},#{soId},3)
+    </insert>
+
+
+    <select id="countSomainReportAll" resultType="int">
+        select count(*) from somain
+        <if test="date!=null and date!=''">
+            <bind name="un" value="'%'+date+'%'"/>
+            where createTime like #{un}
+        </if>
+    </select>
+    <select id="countSomainReportEnd" resultType="int">
+        select count(*) from somain where status=4
+        <if test="date!=null and date!=''">
+            <bind name="un" value="'%'+date+'%'"/>
+            and createTime like #{un}
+        </if>
+    </select>
+
+    <select id="totalSomainReport" resultType="int">
+        select ifnull(sum(SoTotal),0) from somain
+        <if test="date!=null and date!=''">
+            <bind name="un" value="'%'+date+'%'"/>
+            where createTime like #{un}
+        </if>
+    </select>
+
+    <select id="paySomainReport" resultType="int">
+        SELECT ifnull(sum(pay_price),0) from payrecord where pay_type in(1,3)
+        <if test="date!=null and date!=''">
+            <bind name="un" value="'%'+date+'%'"/>
+            and pay_time like #{un}
+        </if>
+    </select>
+
+
+    <select id="findSomainReport" resultMap="SomainResultMap">
+        select p.soId,v.name,p.account,p.createTime,p.tipFee,p.productTotal,p.soTotal,p.payType,p.status,p.prePayFee from somain p,customer v where p.customercode=v.customercode
+        <if test="date!=null and date!=''">
+            <bind name="un" value="'%'+date+'%'"/>
+            and p.createTime like #{un}
+        </if>
+    </select>
+
+
+
+    <select id="findOutStockReportAll" resultMap="OutStockResultMap">
+        select a.*,b.stockTime from(select p.*,t.name from(select soid,productCode,num,itemPrice from soitem)p,product t where p.productCode=t.ProductCode)a,somain b WHERE a.soid=b.soid and b.StockTime is not null limit #{first},#{max}
+    </select>
+    <select id="findOutStockReportCount" resultType="int">
+        select count(*) from(select p.*,t.name from(select soid,productCode,num,itemPrice from soitem)p,product t where p.productCode=t.ProductCode)a,somain b WHERE a.soid=b.soid and b.StockTime is not null
+    </select>
+    <select id="findOutStockReport" resultMap="OutStockResultMap">
+        select a.*,b.stockTime from(select p.*,t.name from(select soid,productCode,num,itemPrice from soitem)p,product t where p.productCode=t.ProductCode)a,somain b WHERE a.soid=b.soid and b.StockTime is not null
+        <if test="date!=null and date!=''">
+            <bind name="un" value="'%'+date+'%'"/>
+            and b.stockTime like #{un}
+        </if>
+    </select>
+    <select id="OutStockReportCount" resultType="int">
+        select ifNull(count(*),0) from(select p.*,t.name from(select soid,productCode,num,itemPrice from soitem)p,product t where p.productCode=t.ProductCode)a,somain b WHERE a.soid=b.soid and b.StockTime is not null
+        <if test="date!=null and date!=''">
+            <bind name="un" value="'%'+date+'%'"/>
+            and b.stockTime like #{un}
+        </if>
+    </select>
+    <select id="OutStockReportNum" resultType="int">
+        select ifNull(sum(num),0) from(select p.*,t.name from(select soid,productCode,num,itemPrice from soitem)p,product t where p.productCode=t.ProductCode)a,somain b WHERE a.soid=b.soid and b.StockTime is not null
+        <if test="date!=null and date!=''">
+            <bind name="un" value="'%'+date+'%'"/>
+            and b.stockTime like #{un}
+        </if>
+    </select>
+    <select id="OutStockReportItemPrice" resultType="int">
+        select ifNull(sum(itemPrice),0) from(select p.*,t.name from(select soid,productCode,num,itemPrice from soitem)p,product t where p.productCode=t.ProductCode)a,somain b WHERE a.soid=b.soid and b.StockTime is not null
+        <if test="date!=null and date!=''">
+            <bind name="un" value="'%'+date+'%'"/>
+            and b.stockTime like #{un}
+        </if>
+    </select>
+
+
+
+
+
+
+</mapper>

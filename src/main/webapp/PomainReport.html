@@ -1,0 +1,183 @@
+
+<div class="formbody">
+    <form>
+        <ul class="seachform">
+
+            <li>
+                <label>日期</label>
+                <input type="text" name="" class="scinput" id="time" placeholder="请选择年月"/>
+            </li>
+
+
+
+            <li><label>&nbsp;</label><input name="" type="button" onclick="findPomainReport()"
+                                            class="scbtn" value="查询" /></li>
+
+        </ul>
+    </form>
+    <table class="tablelist" id="countNum">
+        <tr>
+            <th>采购单数</th>
+            <th>已了结单数</th>
+            <th>采购总金额</th>
+            <th>已付款金额</th>
+        </tr>
+    </table>
+
+
+    <table class="table" id="pomainListDiv">
+        <thead>
+        <tr>
+            <th>序号<span class="sort"><img src="./images/px.gif" /></span></th>
+            <th>采购单编号</th>
+<!--            <th>客户编号</th>-->
+            <th>供应商名称</th>
+            <th>采购单日期</th>
+            <th>经手人</th>
+            <th>采购单单总价格</th>
+            <th>未付款金额</th>
+            <th>处理状态</th>
+
+        </thead>
+        <tbody id="tableBody"></tbody>
+    </table>
+    <div>
+        <ul id="page"></ul>
+    </div>
+    <script id="PomainReportListTemplate" type="text/html">
+        {{each data}}
+        <tr>
+            <td>{{$index+1}}</td>
+            <td>{{$value.poId}}</td>
+            <td>{{$value.name}}</td>
+            <td>{{$value.createTime}}</td>
+            <td>{{$value.account}}</td>
+            <td>{{$value.poTotal}}</td>
+            {{if $value.status==1}}
+            <td>{{$value.poTotal}}</td>
+            {{/if}}
+            {{if $value.status==2}}
+            <td>{{$value.poTotal-$value.prePayFee}}</td>
+            {{/if}}
+            {{if $value.status==3}}
+            <td>0</td>
+            {{/if}}
+            {{if $value.status==4}}
+            <td>0</td>
+            {{/if}}
+            {{if $value.status==5}}
+            <td>{{$value.poTotal-$value.prePayFee}}</td>
+            {{/if}}
+
+            <td>{{$value.status}}</td>
+
+        </tr>
+        {{/each}}
+    </script>
+    <script>
+        $(function () {
+            showPage({
+                currentPage: 1,
+                pageSize: 2,
+                url: '/pomains',
+                templateId: 'PomainReportListTemplate',
+                contentId: 'tableBody'
+            })
+            var date="";
+            Ajax.post("/pomainReport",date ,function (result){
+                doResult(result,function (){
+                    console.log(result.data);
+                    var table=$("#countNum");
+                    var t="";
+                        t+="<tr>";
+                        t+="<td>"+result.data[0]+"</td>";
+                        t+="<td>"+result.data[1]+"</td>";
+                        t+="<td>"+result.data[2]+"</td>";
+                        t+="<td>"+result.data[3]+"</td>";
+                        t+="</tr>";
+
+                    table.append(t);
+
+                })
+            })
+        })
+    </script>
+    <script>
+        function findPomainReport(){
+
+
+            Ajax.getHtml('/PomainReportQuery.html', function (html) {
+                var date=$("#time").val();
+                var data={date:date};
+
+                Ajax.post("/pomainReport",data ,function (result){
+                    doResult(result,function (){
+                        console.log(result.data);
+                        var table=$("#countNum1");
+                        var t="";
+                        t+="<tr>";
+                        t+="<td>"+result.data[0]+"</td>";
+                        t+="<td>"+result.data[1]+"</td>";
+                        t+="<td>"+result.data[2]+"</td>";
+                        t+="<td>"+result.data[3]+"</td>";
+                        t+="</tr>";
+                        table.append(t);
+                    })
+                })
+
+                Ajax.post("/pomainReportList",data ,function (result){
+                    doResult(result,function (){
+                        console.log(result.data);
+                        var table=$("#pomainReportList1");
+                        var t="";
+                        for (let i = 0; i <result.data.length ; i++) {
+                            t+="<tr>";
+                            t+="<td>"+result.data[i].poId+"</td>";
+                            t+="<td>"+result.data[i].name+"</td>";
+                            t+="<td>"+result.data[i].createTime+"</td>";
+                            t+="<td>"+result.data[i].account+"</td>";
+                            t+="<td>"+result.data[i].poTotal+"</td>";
+                            if(result.data[i].status==1){
+                                t+="<td>"+result.data[i].poTotal+"</td>";
+                            }else if(result.data[i].status==2||result.data[i].status==5){
+                                var a=parseInt(result.data[i].poTotal);
+                                var b=parseInt(result.data[i].prePayFee);
+                                var c=parseInt(a-b);
+                                t+="<td>"+c+"</td>";
+                            }else if(result.data[i].status==3||result.data[i].status==4){
+                                t+="<td>"+0+"</td>";
+                            }
+
+                            t+="<td>"+result.data[i].status+"</td>";
+
+
+                            t+="</tr>";
+
+                        }
+                        table.append(t);
+
+                    })
+                })
+
+                layer.open({
+                    type: 1,
+                    title: '查询结果',
+                    area: ['1500px','500px'],
+                    content: html,
+                    btn: ['确认'],
+                    yes: function () {
+                        layer.closeAll();
+                    }
+                })
+            })
+
+        }
+    </script>
+
+</div>
+<script type="text/javascript">
+    laydate.render({
+        elem: '#time',
+        type: 'month'
+    });
+</script>

@@ -1,0 +1,43 @@
+
+    <table class="table" id="productListDiv">
+        <thead>
+        <tr>
+            <th>编号<span class="sort"><img src="./images/px.gif" /></span></th>
+
+            <th>产品编号</th>
+            <th>产品名称</th>
+            <th>库存数量</th>
+            <th>采购在途数</th>
+            <th>预销售数</th>
+            <th>操作</th>
+
+        </thead>
+        <tbody id="tableBody"></tbody>
+    </table>
+    <div>
+        <ul id="page"></ul>
+    </div>
+    <script id="productListTemplate" type="text/html">
+        {{each data}}
+        <tr>
+            <td>{{$index+1}}</td>
+            <td>{{$value.productCode}}</td>
+            <td>{{$value.name}}</td>
+            <td>{{$value.num}}</td>
+            <td>{{$value.poNum}}</td>
+            <td>{{$value.soNum}}</td>
+            <td><input type="button"  value="盘点"  onclick="updateProductNum('{{$value.productCode}}')"/></td>
+        </tr>
+        {{/each}}
+    </script>
+    <script>
+        $(function () {
+            showPage({
+                currentPage: 1,
+                pageSize: 2,
+                url: '/products',
+                templateId: 'productListTemplate',
+                contentId: 'tableBody'
+            })
+        })
+    </script>

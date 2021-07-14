@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aowin.dao.CheckStockDao">
+
+    <resultMap id="CheckStockResultMap" type="com.aowin.pojo.CheckStock">
+        <result property="stockId" column="stockId"/>
+        <result property="productCode" column="productCode"/>
+        <result property="originNum" column="originNum"/>
+        <result property="realNum" column="realNum"/>
+        <result property="stockTime" column="stockTime"/>
+        <result property="createUser" column="createUser"/>
+        <result property="description" column="description"/>
+        <result property="type" column="type"/>
+    </resultMap>
+
+    <resultMap id="PayRecordResultMap" type="com.aowin.pojo.PayRecord">
+        <result property="record_id" column="record_id"/>
+        <result property="pay_time" column="pay_time"/>
+        <result property="pay_price" column="pay_price"/>
+        <result property="account" column="account"/>
+        <result property="orderCode" column="orderCode"/>
+        <result property="pay_type" column="pay_type"/>
+    </resultMap>
+
+    <insert id="insert">
+        insert into checkStock(stockId,productCode,originNum,realNum,stockTime,createUser,description,type) values(#{stockId},#{productCode},#{originNum},#{realNum},#{stockTime},#{createUser},#{description},#{type})
+    </insert>
+    <select id="countAll" resultType="int">
+        select count(*) from payrecord
+    </select>
+    <select id="findAll" resultMap="PayRecordResultMap">
+        select * from payrecord limit #{first},#{max}
+    </select>
+    <select id="findSome" resultMap="PayRecordResultMap">
+        select * from payrecord where 1=1
+        <if test="orderCode!=null and orderCode!=''">
+            <bind name="un" value="'%'+orderCode+'%'"/>
+            and orderCode like #{un}
+        </if>
+        <if test="start!=null and start!=''">
+            and pay_time between #{start}
+        </if>
+        <if test="end!=null and end!=''">
+            and #{end}
+        </if>
+        <if test="pay_type!=null and pay_type!=''">
+            and pay_type=#{pay_type}
+        </if>
+    </select>
+    <select id="pay1Num" resultType="float">
+        select ifNull(sum(pay_price),0) from payrecord where pay_type in(1,3)
+        <if test="date!=null and date!=''">
+            <bind name="un" value="'%'+date+'%'"/>
+            and pay_time like #{un}
+        </if>
+    </select>
+    <select id="pay2Num" resultType="float">
+        select ifNull(sum(pay_price),0) from payrecord where pay_type in(2,4)
+        <if test="date!=null and date!=''">
+            <bind name="un" value="'%'+date+'%'"/>
+            and pay_time like #{un}
+        </if>
+    </select>
+    <select id="pay1Count" resultType="int">
+        select ifNull(count(pay_price),0) from payrecord where pay_type in(1,3)
+        <if test="date!=null and date!=''">
+            <bind name="un" value="'%'+date+'%'"/>
+            and pay_time like #{un}
+        </if>
+    </select>
+    <select id="pay2Count" resultType="int">
+        select ifNull(count(pay_price),0) from payrecord where pay_type in(2,4)
+        <if test="date!=null and date!=''">
+            <bind name="un" value="'%'+date+'%'"/>
+            and pay_time like #{un}
+        </if>
+    </select>
+
+    <select id="stockCheckReportChange" resultMap="PayRecordResultMap">
+        select * from payrecord
+        <if test="date!=null and date!=''">
+            <bind name="un" value="'%'+date+'%'"/>
+            where pay_time like #{un}
+        </if>
+    </select>
+</mapper>

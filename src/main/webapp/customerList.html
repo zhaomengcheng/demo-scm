@@ -1,0 +1,53 @@
+<button class="btn btn-primary" type="button" onclick="addCustomer()">新增</button>
+
+<table class="table" id="customerListDiv">
+    <thead>
+    <tr>
+        <th>序号</th>
+        <th>供应商编号</th>
+        <th>供应商名</th>
+        <th>密码</th>
+        <th>联系人</th>
+        <th>地址</th>
+        <th>邮政编码</th>
+        <th>电话</th>
+        <th>传真</th>
+        <th>创建时间</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+</table>
+<div>
+    <ul id="page"></ul>
+</div>
+<script id="customerListTemplate" type="text/html">
+    {{each data}}
+    <tr>
+        <td>{{$index+1}}</td>
+        <td>{{$value.customerCode}}</td>
+        <td>{{$value.name}}</td>
+        <td>{{$value.password}}</td>
+        <td>{{$value.contactor}}</td>
+        <td>{{$value.address}}</td>
+        <td>{{$value.postCode}}</td>
+        <td>{{$value.tel}}</td>
+        <td>{{$value.fax}}</td>
+        <td>{{$value.createDate}}</td>
+
+        <td><input type="button" id="update" value="修改"  onclick="updateCustomer('{{$value.customerCode}}')"/>
+            <input type="button" id="del" value="删除"  onclick="delCustomer('{{$value.customerCode}}')"/></td>
+    </tr>
+    {{/each}}
+</script>
+<script>
+    $(function () {
+        showPage({
+            currentPage: 1,
+            pageSize: 2,
+            url: '/customers',
+            templateId: 'customerListTemplate',
+            contentId: 'tableBody'
+        })
+    })
+</script>

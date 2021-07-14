@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aowin.dao.CategoryDao">
+
+    <resultMap id="CategoryResultMap" type="com.aowin.pojo.Category">
+        <result property="categoryId" column="categoryId"/>
+        <result property="name" column="name"/>
+        <result property="remark" column="remark"/>
+
+    </resultMap>
+    <resultMap id="CategoryNameResultMap" type="String">
+        <result property="name" column="name"/>
+    </resultMap>
+
+    <select id="getCategory" resultMap="CategoryResultMap">
+        select * from category where categoryId=#{categoryId}
+    </select>
+    <insert id="insert">
+        insert into category (name,remark) values (#{name},#{remark})
+    </insert>
+
+    <select id="countAll" resultType="int">
+        select count(*) from category
+    </select>
+
+    <select id="findAll" resultMap="CategoryResultMap">
+        select * from category limit #{first},#{max}
+    </select>
+
+    <delete id="delete">
+        delete from category where categoryId = #{categoryId}
+    </delete>
+
+    <update id="update">
+        update category set name=#{name},remark=#{remark} where categoryId = #{categoryId}
+    </update>
+
+    <select id="findCategoryName" resultMap="CategoryNameResultMap">
+        select name from category
+    </select>
+</mapper>

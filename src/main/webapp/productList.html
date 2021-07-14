@@ -1,0 +1,48 @@
+<button class="btn btn-primary" type="button" onclick="addProduct()">新增</button>
+
+<table class="table" id="productListDiv">
+    <thead>
+    <tr>
+        <th>序号</th>
+        <th>产品编号</th>
+        <th>产品类别</th>
+        <th>名称</th>
+        <th>数量单位</th>
+        <th>销售价</th>
+        <th>添加日期</th>
+        <th>产品描述</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+</table>
+<div>
+    <ul id="page"></ul>
+</div>
+<script id="product1ListTemplate" type="text/html">
+    {{each data}}
+    <tr>
+        <td>{{$index+1}}</td>
+        <td>{{$value.productCode}}</td>
+        <td>{{$value.categoryName}}</td>
+        <td>{{$value.name}}</td>
+        <td>{{$value.unitName}}</td>
+        <td>{{$value.price}}</td>
+        <td>{{$value.createDate}}</td>
+        <td>{{$value.remark}}</td>
+        <td><input type="button" id="update" value="修改"  onclick="updateProduct('{{$value.productCode}}')"/>
+            <input type="button" id="del" value="删除"  onclick="delProduct('{{$value.productCode}}')"/></td>
+    </tr>
+    {{/each}}
+</script>
+<script>
+    $(function () {
+        showPage({
+            currentPage: 1,
+            pageSize: 2,
+            url: '/products',
+            templateId: 'product1ListTemplate',
+            contentId: 'tableBody'
+        })
+    })
+</script>

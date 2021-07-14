@@ -1,0 +1,154 @@
+
+
+
+
+
+<div id="soDiv" class="rightinfo">
+    <form action="#" id="somainForm">
+        <div class="tools">
+
+            <ul class="toolbar">
+                <li onclick="addItem()"><img src="./images/t01.png" />增加明细</li>
+                <!--                <li onclick="saveSomain()"><img src="./images/t07.png" />保存</li>-->
+            </ul>
+
+        </div>
+        <table class="tablelist">
+
+            <tr>
+                <td>采购单编号</td>
+                <td><input type="text" value="" id="soId" class="poinput" readonly /> <span>*</span></td>
+                <td>创建时间</td>
+                <td><input type="text" value="" id="createTime" class="poinput" readonly /> <span>*</span></td>
+                <td>顾客名称</td>
+                <td><select class="poinput" id="custumerName" ></select></td>
+            </tr>
+            <tr>
+                <td>创建用户</td>
+                <td><input type="text" id="account" readonly class="poinput" value=""/> <span>*</span></td>
+                <td>附加费用</td>
+                <td><input type="text" id="tipFee" class="poinput"/> <span>*</span></td>
+                <td>产品总价</td>
+                <td><input type="text" id="productTotal" class="poinput" readonly/> <span>*</span></td>
+            </tr>
+            <tr>
+                <td>付款方式</td>
+                <td><select id="payType" class="poinput">
+                    <option>货到付款</option>
+                    <option>款到发货</option>
+                    <option>预付款发货</option>
+                </select> <span>*</span></td>
+                <td>最低预付款金额</td>
+                <td><input type="text" id="prePayFee" class="poinput" /> <span>*</span></td>
+                <td>备注</td>
+                <td><input type="text" id="remark"  class="poinput" /></td>
+            </tr>
+
+        </table>
+
+        <table class="tablelist itemlist" id="detailTable" style="margin-top:10px;">
+            <tr>
+                <th>序号</th>
+                <th>商品编号</th>
+                <th>商品名称</th>
+                <th>数量单位</th>
+                <th>销售单价</th>
+                <th>产品数量</th>
+                <th>销售明细总价</th>
+                <th>操作</th>
+            </tr>
+        </table>
+    </form>
+
+
+    <div class="tip">
+        <div class="tiptop">
+            <span>提示信息</span>
+        </div>
+
+        <div class="tipinfo">
+            <span><img src="./images/ticon.png" /></span>
+            <div class="tipright">
+                <p>是否确认对信息的修改 ？</p>
+                <cite>如果是请点击确定按钮 ，否则请点取消。</cite>
+            </div>
+        </div>
+
+        <div class="tipbtn">
+            <input name="" type="button" class="sure" value="确定" />&nbsp; <input
+                name="" type="button" class="cancel" value="取消" />
+        </div>
+
+    </div>
+</div>
+<div id="productDiv" class="rightinfo" style="display:none">
+    <div class="tools">
+        <ul class="toolbar">
+            <li onclick="sure()"><span><img src="./images/t06.png" /></span>确定</li>
+            <li onclick="hiddenDiv()"><span><img src="./images/t03.png" /></span>取消</li>
+        </ul>
+    </div>
+    <table class="tablelist" id="spxxTable">
+        <thead>
+        <tr>
+            <td>选择</td>
+            <td>商品编码</td>
+            <td>商品名称</td>
+            <td>数量单位</td>
+            <td>销售单价</td>
+        </tr>
+        </thead>
+        <tbody id="tableBodyOverAdd"></tbody>
+    </table>
+</div>
+<script id="overAddListTemplate" type="text/html">
+    {{each data}}
+    <tr>
+        <td><input type="radio" name="choice"/></td>
+        <td>{{$value.productCode}}</td>
+        <td>{{$value.name}}</td>
+        <td>{{$value.unitName}}</td>
+        <td>{{$value.price}}</td>
+    </tr>
+    {{/each}}
+</script>
+<script>
+    $(function () {
+        showPage({
+            currentPage: 1,
+            pageSize: 100,
+            url: '/products',
+            templateId: 'overAddListTemplate',
+            contentId: 'tableBodyOverAdd'
+        })
+    })
+
+</script>
+
+
+<script type="text/javascript">
+    $('.tablelist tbody tr:odd').addClass('odd');
+</script>
+
+<script type="text/javascript">
+    $(function() {
+        $(".click").click(function() {
+            $(".tip").fadeIn(200);
+        });
+
+        $(".tiptop a").click(function() {
+            $(".tip").fadeOut(200);
+        });
+
+        $(".sure").click(function() {
+            $(".tip").fadeOut(100);
+        });
+
+        $(".cancel").click(function() {
+            $(".tip").fadeOut(100);
+        });
+
+    });
+</script>
+<script type="text/javascript" src="./js/productDiv.js"></script>
+

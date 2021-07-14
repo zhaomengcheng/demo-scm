@@ -1,0 +1,181 @@
+
+<script type="text/javascript">
+    laydate.render({
+        elem: '#timeRange',
+        type: 'date',
+        range: '~',
+        format:'yyyy-MM-dd'
+    });
+</script>
+<div class="formbody">
+    <form>
+        <ul class="seachform">
+
+            <li><label>采购单编号</label><input id="poId" name="" type="text"
+                                           class="scinput" /></li>
+            <li><label>日期范围</label>-->
+                <input type="text" name="" class="scinput" id="timeRange" placeholder="起始日期 ~ 截止日期"/></li>
+
+            <li><label>处理状态</label>
+                <select id="status">
+                    <option></option>
+                    <option>新增</option>
+                    <option>已收货</option>
+                    <option>已付款</option>
+                    <option>已了结</option>
+                    <option>已预付</option>
+                </select>
+            </li>
+
+            <li><label>&nbsp;</label><input name="" type="button" class="scbtn" value="查询" onclick="findsome()"/></li>
+
+        </ul>
+    </form>
+
+    <table class="table" id="pomainListDiv">
+        <thead>
+        <tr>
+           <th>编号<span class="sort"><img src="./images/px.gif" /></span></th>
+           <th>采购单编号</th>
+           <th>创建时间</th>
+           <th>供应商名称</th>
+           <th>创建用户</th>
+           <th>附加费用</th>
+           <th>采购产品总价</th>
+           <th>采购单总价格</th>
+           <th>付款方式</th>
+           <th>处理状态</th>
+<!--            <th>操作</th>-->
+        </thead>
+        <tbody id="tableBody"></tbody>
+    </table>
+    <div>
+        <ul id="page"></ul>
+    </div>
+    <script id="pomainQueryListTemplate" type="text/html">
+        {{each data}}
+        <tr>
+            <td>{{$index+1}}</td>
+            <td>{{$value.poId}}</td>
+            <td>{{$value.createTime}}</td>
+            <td>{{$value.name}}</td>
+            <td>{{$value.account}}</td>
+            <td>{{$value.tipFee}}</td>
+            <td>{{$value.productTotal}}</td>
+            <td>{{$value.poTotal}}</td>
+            <td>{{$value.payType}}</td>
+<!--            <td>{{$value.status}}</td>-->
+            {{if $value.status==1}}
+            <td>新增</td>
+            {{/if}}
+            {{if $value.status==2}}
+            <td>已收货</td>
+            {{/if}}
+            {{if $value.status==3}}
+            <td>已付款</td>
+            {{/if}}
+            {{if $value.status==4}}
+            <td>已了结</td>
+            {{/if}}
+            {{if $value.status==5}}
+            <td>已预付</td>
+            {{/if}}
+
+        </tr>
+        {{/each}}
+    </script>
+    <script>
+        $(function () {
+            showPage({
+                currentPage: 1,
+                pageSize: 2,
+                url: '/pomains',
+                templateId: 'pomainQueryListTemplate',
+                contentId: 'tableBody'
+            })
+        })
+    </script>
+    <script>
+        function findsome(){
+            var poId=$("#poId").val();
+            var dateScope=$("#timeRange").val();
+            var date=dateScope.split(" ~ ");
+            var start=date[0];
+            var end=date[1];
+            console.log(start);
+            console.log(end);
+            var status="";
+            if($("#status").val()=="新增"){
+                status="1";
+            }else if($("#status").val()=="已收货"){
+                status="2";
+            }else if($("#status").val()=="已付款"){
+                status="3";
+            }else if($("#status").val()=="已了结"){
+                status="4";
+            }else if($("#status").val()=="已预付"){
+                status="5";
+            }
+            var data={poId:poId,start:start,end:end,status:status};
+            Ajax.post("/pomains2",data,function (result){
+                doResult(result,function (){
+                    console.log(result.data);
+                    var table=$("#showQueryTable");
+                    var t="";
+                    for(var i=0;i<result.data.length;i++){
+                        t+="<tr>";
+                        t+="<td>"+result.data[i].poId+"</td>";
+                        t+="<td>"+result.data[i].createTime+"</td>";
+                        t+="<td>"+result.data[i].name+"</td>";
+                        t+="<td>"+result.data[i].account+"</td>";
+                        t+="<td>"+result.data[i].tipFee+"</td>";
+                        t+="<td>"+result.data[i].productTotal+"</td>";
+                        t+="<td>"+result.data[i].poTotal+"</td>";
+                        t+="<td>"+result.data[i].payType+"</td>";
+                        if(result.data[i].status==1){
+                            t+="<td>"+"新增"+"</td>"
+                        }else if(result.data[i].status==2){
+                            t+="<td>"+"已收货"+"</td>"
+                        }else if(result.data[i].status==3){
+                            t+="<td>"+"已付款"+"</td>"
+                        }else if(result.data[i].status==4){
+                            t+="<td>"+"已了结"+"</td>"
+                        }else if(result.data[i].status==5){
+                            t+="<td>"+"已预付"+"</td>"
+                        }
+                        t+="</tr>";
+                    }
+                    table.append(t);
+
+                })
+            })
+
+            Ajax.getHtml('/showQuery.html', function (html) {
+                layer.open({
+                    type: 1,
+                    title: '查询结果',
+                    area: ['1500px','500px'],
+                    content: html,
+                    btn: ['确认'],
+                    yes: function () {
+                        layer.closeAll();
+                    }
+                })
+            })
+
+        }
+    </script>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,188 @@
+
+<div class="formbody">
+    <form>
+        <ul class="seachform">
+
+            <li>
+                <label>日期</label>
+                <input type="text" name="" class="scinput" id="time" placeholder="请选择年月"/>
+            </li>
+
+
+
+            <li><label>&nbsp;</label><input name="" type="button" onclick="findStockCheckReport()"
+                                            class="scbtn" value="查询" /></li>
+
+        </ul>
+    </form>
+    <table class="tablelist" id="countNum">
+        <tr>
+            <th>收款总金额</th>
+            <th>付款总金额</th>
+            <th>收款次数</th>
+            <th>付款次数</th>
+        </tr>
+    </table>
+
+
+    <table class="table" id="stockCheckListDiv">
+        <thead>
+        <tr>
+            <th>序号<span class="sort"><img src="./images/px.gif" /></span></th>
+            <th>单据号</th>
+            <th>收付款时间</th>
+            <th>金额</th>
+            <th>经手人</th>
+            <th>收付款类型</th>
+
+
+        </thead>
+        <tbody id="tableBody"></tbody>
+    </table>
+    <div>
+        <ul id="page"></ul>
+    </div>
+    <script id="StockCheckReportListTemplate" type="text/html">
+        {{each data}}
+        <tr>
+            <td>{{$index+1}}</td>
+            <td>{{$value.orderCode}}</td>
+            <td>{{$value.pay_time}}</td>
+            <td>{{$value.pay_price}}</td>
+            <td>{{$value.account}}</td>
+            {{if $value.pay_type==1}}
+            <td>收款</td>
+            {{/if}}
+            {{if $value.pay_type==2}}
+            <td>付款</td>
+            {{/if}}
+            {{if $value.pay_type==3}}
+            <td>收预付款</td>
+            {{/if}}
+            {{if $value.pay_type==4}}
+            <td>付预付款</td>
+            {{/if}}
+<!--            收款1-->
+<!--            付款2-->
+<!--            收预付款3-->
+<!--            付预付款4-->
+
+
+
+        </tr>
+        {{/each}}
+    </script>
+    <script>
+        $(function () {
+            showPage({
+                currentPage: 1,
+                pageSize: 2,
+                url: '/payRecords',
+                templateId: 'StockCheckReportListTemplate',
+                contentId: 'tableBody'
+            })
+
+            Ajax.post("/stockCheckReport", {},function (result){
+                doResult(result,function (){
+                    console.log(result.data);
+                    var table=$("#countNum");
+                    var t="";
+                    t+="<tr>";
+                    t+="<td>"+result.data[0]+"</td>";
+                    t+="<td>"+result.data[1]+"</td>";
+                    t+="<td>"+result.data[2]+"</td>";
+                    t+="<td>"+result.data[3]+"</td>";
+                    t+="</tr>";
+
+                    table.append(t);
+
+                })
+            })
+        })
+    </script>
+    <script>
+        function findStockCheckReport(){
+
+
+            Ajax.getHtml('/StockCheckReportQuery.html', function (html) {
+                var date=$("#time").val();
+                var data={date:date};
+                Ajax.post("/stockCheckReport",data ,function (result){
+                    doResult(result,function (){
+                        console.log(result.data);
+                        var table=$("#countNum1");
+                        var t="";
+                        t+="<tr>";
+                        t+="<td>"+result.data[0]+"</td>";
+                        t+="<td>"+result.data[1]+"</td>";
+                        t+="<td>"+result.data[2]+"</td>";
+                        t+="<td>"+result.data[3]+"</td>";
+                        t+="</tr>";
+                        table.append(t);
+                    })
+                })
+
+                Ajax.post("/stockCheckReportChange",data ,function (result){
+                    doResult(result,function (){
+                        console.log(result.data);
+                        var table=$("#StockCheckReportList1");
+                        var t="";
+                        for (let i = 0; i <result.data.length ; i++) {
+                            t+="<tr>";
+                            t+="<td>"+result.data[i].orderCode+"</td>";
+                            t+="<td>"+result.data[i].pay_time+"</td>";
+                            t+="<td>"+result.data[i].pay_price+"</td>";
+                            t+="<td>"+result.data[i].account+"</td>";
+                            // {{if $value.pay_type==1}}
+                            // <td>收款</td>
+                            // {{/if}}
+                            //     {{if $value.pay_type==2}}
+                            //     <td>付款</td>
+                            //     {{/if}}
+                            //         {{if $value.pay_type==3}}
+                            //         <td>收预付款</td>
+                            //         {{/if}}
+                            //             {{if $value.pay_type==4}}
+                            //             <td>付预付款</td>
+                            //             {{/if}}
+                            if(result.data[i].pay_type=="1"){
+                                t+="<td>收款</td>";
+                            }else if(result.data[i].pay_type=="2"){
+                                t+="<td>付款</td>";
+                            }else if(result.data[i].pay_type=="3"){
+                                t+="<td>收预付款</td>";
+                            }else if(result.data[i].pay_type=="4"){
+                                t+="<td>付预付款</td>";
+                            }
+
+
+                            t+="</tr>";
+
+                        }
+                        table.append(t);
+
+                    })
+                })
+
+                layer.open({
+                    type: 1,
+                    title: '查询结果',
+                    area: ['1500px','500px'],
+                    content: html,
+                    btn: ['确认'],
+                    yes: function () {
+                        layer.closeAll();
+                    }
+                })
+            })
+
+        }
+    </script>
+
+</div>
+<script type="text/javascript">
+    laydate.render({
+        elem: '#time',
+        type: 'month'
+    });
+</script>

@@ -1,0 +1,57 @@
+<div class="formbody">
+    <div class="formtitle"><span>基本信息</span></div>
+    <ul class="forminfo">
+        <li><label>用户账号<span>*</span></label><input id="accountupd" name="account" type="text" class="dfinput" readonly /></li>
+        <li><label>用户密码<span>*</span></label><input id="passwordupd" name="password" type="text" class="dfinput" onchange="checkUserUpt()" /></br><span class="remind" id="userpassword"></span></li>
+        <li><label>用户姓名<span>*</span></label><input id="nameupd" name="name" type="text" class="dfinput" onchange="checkUserUpt()"  /></br><span class="remind" id="username"></span></li>
+        <li><label>添加日期<span>*</span></label><input id="createDateupd" name="createDate" type="text" class="dfinput" readonly /></li>
+        <li><label>锁定状态<span>*</span></label><cite><input id="isStatusupd" name="statusupd" type="radio" value="1" />是&nbsp;&nbsp;&nbsp;&nbsp;<input id="notStatusupd" name="statusupd" type="radio" value="0"  />否</cite></li>
+        <li><label>权限<span>*</span></label><cite><input id="adminupd" name="optionupd" type="checkbox" value="admin" class="manager" onchange="checkUserUpt()"/>管理员&nbsp;&nbsp;&nbsp;&nbsp;<input id="purchaseupd" name="optionupd" type="checkbox" value="purchase" onchange="checkUserUpt()" />采购&nbsp;&nbsp;&nbsp;&nbsp;<input id="sellupd" name="optionupd" type="checkbox" value="sell" onchange="checkUserUpt()" />销售&nbsp;&nbsp;&nbsp;&nbsp;<input id="stockupd" name="optionupd" type="checkbox" value="stock" onchange="checkUserUpt()" />仓管&nbsp;&nbsp;&nbsp;&nbsp;<input id="financeupd" name="optionupd" type="checkbox" value="finance" onchange="checkUserUpt()" />财务</cite></br><span class="remind" id="useroption"></span></li>
+    </ul>
+</div>
+<script type="text/javascript">
+    $(function(){
+        $(".manager").change(function(){
+            $(".forminfo :checkbox:gt(0)").prop('checked',$(this).prop('checked'));
+        });
+
+        $('.forminfo :checkbox:gt(0)').change(function(){
+            $('.manager').prop('checked',$('.forminfo :checkbox:gt(0):not(:checked)').length>0?false:true);
+        })
+    })
+</script>
+<script>
+    function checkUserUpt(){
+        var nameupd = $("#nameupd").val();
+        var passwordupd = $("#passwordupd").val();
+        var optionsupd = document.getElementsByName("optionupd");
+        if (nameupd==""){
+            $("#username").html("名字不能为空");
+            $("#username").css("color","red");
+        }else{
+            $("#username").html("√");
+            $("#username").css("color","green");
+        }
+        if (passwordupd==""){
+            $("#userpassword").html("密码不能为空");
+            $("#userpassword").css("color","red");
+        }else{
+            $("#userpassword").html("√");
+            $("#userpassword").css("color","green");
+        }
+
+        var flag=false;
+        for (var i=0;i<optionsupd.length;i++){
+            if (optionsupd[i].checked){
+                flag=true;break; }
+        }
+        if (flag){
+            $("#useroption").html("√");
+            $("#useroption").css("color","green");
+
+        }else{
+            $("#useroption").html("职务不能为空");
+            $("#useroption").css("color","red");
+        }
+    }
+</script>

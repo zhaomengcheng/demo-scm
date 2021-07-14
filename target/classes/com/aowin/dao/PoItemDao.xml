@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aowin.dao.PoItemDao">
+
+    <resultMap id="PoItemResultMap" type="com.aowin.pojo.PoItem">
+        <result property="poId" column="poId"/>
+        <result property="productCode" column="productCode"/>
+        <result property="unitName" column="unitName"/>
+        <result property="unitPrice" column="unitPrice"/>
+        <result property="num" column="num"/>
+        <result property="itemPrice" column="itemPrice"/>
+    </resultMap>
+
+
+    <insert id="insert">
+        insert into poItem(poId,productCode,unitName,unitPrice,num,itemPrice) values(#{poId},#{productCode},#{unitName},#{unitPrice},#{num},#{itemPrice})
+    </insert>
+    <delete id="delete">
+        delete from poItem where poId = #{poId}
+    </delete>
+    <select id="getPoItems" resultMap="PoItemResultMap">
+        select * from poItem where poId =#{poId}
+    </select>
+</mapper>

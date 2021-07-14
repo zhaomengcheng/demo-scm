@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aowin.dao.ProductDao">
+
+    <resultMap id="ProductResultMap" type="com.aowin.pojo.Product">
+        <result property="productCode" column="productCode"/>
+        <result property="categoryName" column="categoryName"/>
+        <result property="name" column="name"/>
+        <result property="unitName" column="unitName"/>
+        <result property="price" column="price"/>
+        <result property="createDate" column="createDate"/>
+        <result property="remark" column="remark"/>
+        <result property="num" column="num"/>
+        <result property="poNum" column="poNum"/>
+        <result property="soNum" column="soNum"/>
+        <result property="inStock" column="inStock"/>
+        <result property="outStock" column="outStock"/>
+    </resultMap>
+    <resultMap id="StockRecordResultMap" type="com.aowin.pojo.StockRecord">
+        <result property="productCode" column="productCode"/>
+        <result property="stockId" column="stockId"/>
+        <result property="orderCode" column="orderCode"/>
+        <result property="stockNum" column="stockNum"/>
+        <result property="stockType" column="stockType"/>
+        <result property="stockTime" column="stockTime"/>
+        <result property="createUser" column="createUser"/>
+    </resultMap>
+
+    <select id="getAll" resultMap="ProductResultMap">
+        SELECT u.productCode,c.Name categoryName,u.name,u.unitName,u.price,u.createDate,u.remark,u.num,u.poNum,u.soNum from product u,category c where u.categoryId=c.categoryId
+    </select>
+
+
+    <select id="getProduct" resultMap="ProductResultMap">
+        SELECT u.productCode,c.Name categoryName,u.name,u.unitName,u.price,u.createDate,u.remark,u.num,u.poNum,u.soNum from product u,category c where u.categoryId=c.categoryId and u.productcode=#{productCode}
+    </select>
+    <insert id="insert">
+        insert into product(productCode,name,unitName,categoryID,createdate,price,remark) values(#{productCode},#{name},#{unitName},(select categoryID from category where name=#{categoryName}),#{createDate},#{price},#{remark})
+    </insert>
+
+    <select id="countAll" resultType="int">
+        select count(*) from product
+    </select>
+    <select id="findAll" resultMap="ProductResultMap">
+        SELECT u.productCode,c.Name categoryName,u.name,u.unitName,u.price,u.createDate,u.remark,u.num,u.poNum,u.soNum from(select * from product limit #{first},#{max})u,category c where u.categoryId=c.categoryId
+    </select>
+
+
+    <select id="findProduct" resultMap="ProductResultMap">
+        SELECT u.productCode,c.Name categoryName,u.name,u.unitName,u.price,u.createDate,u.remark,u.num,u.poNum,u.soNum from product u,category c where u.categoryId=c.categoryId
+        <if test="productCode!=null and productCode!=''">
+            <bind name="un" value="'%'+productCode+'%'"/>
+            and u.productCode like #{un}
+        </if>
+        <if test="name!=null and name!=''">
+            <bind name="unn" value="'%'+name+'%'"/>
+            and u.name like #{unn}
+        </if>
+        <if test="min!=null and min!=''">
+            and u.num between #{min}
+        </if>
+        <if test="max!=null and max!=''">
+            and #{max}
+        </if>
+    </select>
+
+
+
+
+
+    <delete id="delete">
+        delete from product where productCode = #{productCode}
+    </delete>
+
+    <update id="update">
+        update product set name=#{name},unitName=#{unitName},categoryId=(select categoryId from category where name=#{categoryName}),createDate=#{createDate},price=#{price},remark=#{remark} where productCode = #{productCode}
+    </update>
+
+    <select id="getNum" resultType="int">
+        select ifNull(num,0) from product where productCode = #{productCode}
+    </select>
+    <!--查询产品的采购在途数-->
+    <select id="getPoNum" resultType="int">
+        select ifNull(poNum,0) from product where productCode = #{productCode}
+    </select>
+    <!--查询产品的销售在途数-->
+    <select id="getSoNum" resultType="int">
+        select ifNull(soNum,0) from product where productCode = #{productCode}
+    </select>
+
+    <!--修改产品的采购在途数-->
+    <update id="updateNum">
+        update product set num =#{num} where productCode = #{productCode}
+    </update>
+    <!--修改产品的采购在途数-->
+    <update id="updatePoNum">
+        update product set poNum =#{poNum} where productCode = #{productCode}
+    </update>
+    <!--修改产品的销售在途数-->
+    <update id="updateSoNum">
+        update product set soNum =#{soNum} where productCode = #{productCode}
+    </update>
+
+    <select id="getSumNum" resultType="int">
+        select sum(num) from product
+    </select>
+
+    <select id="getIn" resultType="int">
+        select sum(stocknum) from stockrecord where stocktype in(1,3)
+        <if test="date!=null and date!=''">
+            and stockTime between #{date}
+        </if>
+        <if test="now!=null and now!=''">
+            and  #{now}
+        </if>
+</select>
+
+
+    <select id="getOut" resultType="int">
+        select sum(stocknum) from stockrecord where stocktype in(2,4)
+        <if test="date!=null and date!=''">
+            and stockTime between #{date}
+        </if>
+        <if test="now!=null and now!=''">
+            and  #{now}
+        </if>
+
+    </select>
+
+    <select id="stockReportList" resultMap="ProductResultMap">
+        select a.*,ifnull(o.outStock,0) outStock from
+        (select p.*,ifnull(o.inStock,0) inStock from product p LEFT JOIN(
+          select sum(stocknum)inStock,ProductCode from stockrecord where stocktype in(1,3)
+        <if test="date!=null and date!=''">
+            and stockTime between #{date}
+        </if>
+        <if test="now!=null and now!=''">
+            and  #{now}
+        </if>
+          group by productCode )o on p.ProductCode=o.ProductCode)a LEFT JOIN (
+         select sum(stocknum)outStock,ProductCode from stockrecord where stocktype in(2,4)
+        <if test="date!=null and date!=''">
+            and stockTime between #{date}
+        </if>
+        <if test="now!=null and now!=''">
+            and  #{now}
+        </if>
+         group by productCode )o on a.ProductCode=o.ProductCode;
+    </select>
+
+    <select id="findStockRecord" resultMap="StockRecordResultMap">
+        select * from stockrecord where productCode=#{productCode}
+    </select>
+    
+
+</mapper>

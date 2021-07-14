@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aowin.dao.UserDao">
+
+    <resultMap id="UserResultMap" type="com.aowin.pojo.User">
+        <result property="account" column="account"/>
+        <result property="password" column="password"/>
+        <result property="name" column="name"/>
+        <result property="createDate" column="CreateDate"/>
+        <result property="status" column="status"/>
+        <collection property="modelName"  ofType="String" javaType="arraylist">
+            <constructor>
+                <arg column="modelName"></arg>
+            </constructor>
+        </collection>
+    </resultMap>
+<!--    <resultMap id="UserMap" type="com.aowin.pojo.User">-->
+<!--        <result property="account" column="account"/>-->
+<!--        <result property="password" column="password"/>-->
+<!--        <result property="name" column="name"/>-->
+<!--        <result property="createDate" column="CreateDate"/>-->
+<!--        <result property="status" column="status"/>-->
+<!--    </resultMap>-->
+
+    <select id="getUser" resultMap="UserResultMap">
+        select u.*,m.modelname from scmuser u inner join (select m.*,s.modelname from usermodel m inner join systemmodel s on m.modelcode = s.modelcode) m on u.account = m.account and u.account = #{account}
+    </select>
+    <insert id="insert">
+        insert into scmuser (account,password,name,createdate,status) values (#{account},#{password},#{name},#{createDate},#{status})
+    </insert>
+    <insert id="insertModelName">
+        insert into usermodel values(#{account},(select modelcode from systemmodel where modelname=#{modelName}));
+    </insert>
+
+    <select id="findByAccount" resultMap="UserResultMap">
+        select u.*,m.modelname from scmuser u inner join (select m.*,s.modelname from usermodel m inner join systemmodel s on m.modelcode = s.modelcode) m on u.account = m.account and u.account = #{account} and u.password = #{password}
+    </select>
+
+    <select id="countAll" resultType="int">
+        select count(*) from scmuser
+    </select>
+
+    <select id="findAll" resultMap="UserResultMap">
+        select u.*,m.modelname  from (select * from scmuser limit #{first},#{max}) u inner join (select m.*,s.modelname from usermodel m inner join systemmodel s on m.modelcode = s.modelcode) m on u.account = m.account
+    </select>
+
+    <delete id="deleteByAccount">
+        delete from scmuser where account = #{account}
+    </delete>
+
+    <update id="updateByAccount">
+        update scmuser set password=#{password},name=#{name},status=#{status} where account = #{account}
+    </update>
+
+    <update id="updateModelName">
+        update usermodel set modelcode=#{modecode} where account = #{account}
+    </update>
+
+    <delete id="deleteModelName">
+        delete from usermodel where account = #{account}
+    </delete>
+</mapper>

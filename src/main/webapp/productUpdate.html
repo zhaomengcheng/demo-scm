@@ -1,0 +1,22 @@
+
+<div class="formbody">
+
+    <div class="formtitle"><span>基本信息</span></div>
+
+    <ul class="forminfo">
+
+        <li><label>产品编号<span>*</span></label><input name="productCode" type="text" class="dfinput" id="productCode"  readonly="readonly"/><span id="check1"></span></li>
+        <li><label>产品名称<span>*</span></label><input name="name" type="text" class="dfinput" id="name" onkeyup="check2()"/><span id="check3"></span></li>
+        <li><label>数量单位<span>*</span></label><input name="unitName" type="text" class="dfinput" id="unitName" onkeyup="check3()"/><span id="check4"></span></li>
+        <li><label>分类名称<span>*</span></label>
+            <select id="categoryName" name="categoryName" >
+            </select>
+        </li>
+        <li><label>添加日期<span>*</span></label><input name="createDate" type="text"  class="dfinput" id="createDate" readonly="readonly"/></li>
+        <li><label>销售价<span>*</span></label><input name="price" type="text" value="0" class="dfinput" id="price" onkeyup="check4()"/><span id="check5"></span></li>
+        <li><label>产品描述<span>*</span></label><input name="remark" type="text" class="dfinput" id="remark" onkeyup="check5()"/><span id="check6"></span></li>
+
+    </ul>
+
+
+</div>

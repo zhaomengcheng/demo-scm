@@ -1,0 +1,160 @@
+
+<script type="text/javascript">
+    laydate.render({
+        elem: '#timeRange',
+        type: 'date',
+        range: '~',
+        format:'yyyy-MM-dd'
+    });
+</script>
+<div class="formbody">
+    <form>
+        <ul class="seachform">
+
+            <li><label>相关单据号</label><input id="orderCode" name="" type="text"
+                                           class="scinput" /></li>
+            <li><label>日期范围</label>-->
+                <input type="text" name="" class="scinput" id="timeRange" placeholder="起始日期 ~ 截止日期"/></li>
+
+
+
+<!--            收款1-->
+<!--            付款2-->
+<!--            收预付款3-->
+<!--            付预付款4-->
+            <li><label>收付款情况</label>
+                <select id="pay_type">
+                    <option></option>
+                    <option value="1">收款</option>
+                    <option value="2">付款</option>
+                    <option value="3">收预付款</option>
+                    <option value="4">付预付款</option>
+                </select>
+            </li>
+
+            <li><label>&nbsp;</label><input name="" type="button" class="scbtn" value="查询" onclick="findPayRecord()"/></li>
+
+        </ul>
+    </form>
+
+    <table class="table" id="pomainListDiv">
+        <thead>
+        <tr>
+            <th>序号<span class="sort"><img src="./images/px.gif" /></span></th>
+            <th>收付款时间</th>
+            <th>相关单据号</th>
+            <th>金额</th>
+            <th>经手人</th>
+            <th>付款方式</th>
+
+        </thead>
+        <tbody id="tableBody"></tbody>
+    </table>
+    <div>
+        <ul id="page"></ul>
+    </div>
+    <script id="payRecordQueryListTemplate" type="text/html">
+        {{each data}}
+        <tr>
+            <td>{{$index+1}}</td>
+            <td>{{$value.pay_time}}</td>
+            <td>{{$value.orderCode}}</td>
+            <td>{{$value.pay_price}}</td>
+            <td>{{$value.account}}</td>
+
+            <!--            <td>{{$value.status}}</td>-->
+            {{if $value.pay_type==1}}
+            <td>收款</td>
+            {{/if}}
+            {{if $value.pay_type==2}}
+            <td>付款</td>
+            {{/if}}
+            {{if $value.pay_type==3}}
+            <td>收预付款</td>
+            {{/if}}
+            {{if $value.pay_type==4}}
+            <td>付预付款</td>
+            {{/if}}
+
+        </tr>
+        {{/each}}
+    </script>
+    <script>
+        $(function () {
+            showPage({
+                currentPage: 1,
+                pageSize: 2,
+                url: '/payRecords',
+                templateId: 'payRecordQueryListTemplate',
+                contentId: 'tableBody'
+            })
+        })
+    </script>
+    <script>
+        function findPayRecord(){
+            var orderCode=$("#orderCode").val();
+            var dateScope=$("#timeRange").val();
+            var date=dateScope.split(" ~ ");
+            var start=date[0];
+            var end=date[1];
+            console.log(start);
+            console.log(end);
+            var pay_type=$("#pay_type").val();;
+
+            var data={orderCode:orderCode,start:start,end:end,pay_type:pay_type};
+            Ajax.post("/payRecords2",data,function (result){
+                doResult(result,function (){
+                    console.log(result.data);
+                    var table=$("#showQueryTable1");
+                    var t="";
+                    for(var i=0;i<result.data.length;i++){
+                        t+="<tr>";
+                        t+="<td>"+result.data[i].pay_time+"</td>";
+                        t+="<td>"+result.data[i].orderCode+"</td>";
+                        t+="<td>"+result.data[i].pay_price+"</td>";
+                        t+="<td>"+result.data[i].account+"</td>";
+                        if(result.data[i].pay_type==1){
+                            t+="<td>"+"收款"+"</td>"
+                        }else if(result.data[i].pay_type==2){
+                            t+="<td>"+"付款"+"</td>"
+                        }else if(result.data[i].pay_type==3){
+                            t+="<td>"+"收预付款"+"</td>"
+                        }else if(result.data[i].pay_type==4){
+                            t+="<td>"+"付预付款"+"</td>"
+                        }
+                        t+="</tr>";
+                    }
+                    table.append(t);
+
+                })
+            })
+
+            Ajax.getHtml('/showPayRecordQuery.html', function (html) {
+                layer.open({
+                    type: 1,
+                    title: '查询结果',
+                    area: ['1500px','500px'],
+                    content: html,
+                    btn: ['确认'],
+                    yes: function () {
+                        layer.closeAll();
+                    }
+                })
+            })
+
+        }
+    </script>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+

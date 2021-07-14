@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aowin.dao.VenderDao">
+
+    <resultMap id="VenderResultMap" type="com.aowin.pojo.Vender">
+        <result property="venderCode" column="venderCode"/>
+        <result property="name" column="name"/>
+        <result property="password" column="password"/>
+        <result property="contactor" column="contactor"/>
+        <result property="address" column="address"/>
+        <result property="postCode" column="postCode"/>
+        <result property="tel" column="tel"/>
+        <result property="fax" column="fax"/>
+        <result property="createDate" column="createDate"/>
+
+    </resultMap>
+
+    <select id="getVender" resultMap="VenderResultMap">
+        SELECT * from vender where venderCode=#{venderCode}
+    </select>
+    <insert id="insert">
+        insert into vender(venderCode,name,password,contactor,address,postCode,tel,fax,createdate) values(#{venderCode},#{name},#{password},#{contactor},#{address},#{postCode},#{tel},#{fax},#{createDate})
+    </insert>
+
+    <select id="countAll" resultType="int">
+        select count(*) from vender
+    </select>
+    <select id="findAll" resultMap="VenderResultMap">
+        select * from vender limit #{first},#{max}
+    </select>
+    <select id="findAll1" resultMap="VenderResultMap">
+        select * from vender
+    </select>
+
+    <delete id="delete">
+        delete from vender where venderCode = #{venderCode}
+    </delete>
+
+    <update id="update">
+        update vender set name=#{name},password=#{password},contactor=#{contactor},address=#{address},postCode=#{postCode},tel=#{tel},fax=#{fax},createDate=#{createDate} where venderCode = #{venderCode}
+    </update>
+
+
+</mapper>

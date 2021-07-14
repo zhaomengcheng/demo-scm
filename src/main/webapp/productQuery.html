@@ -1,0 +1,137 @@
+
+
+<div class="formbody">
+    <form>
+        <ul class="seachform">
+
+            <li><label>产品编号</label><input id="productCode" name="" type="text"
+                                           class="scinput" /></li>
+            <li><label>产品名称</label><input id="productName" name="" type="text"
+                                          class="scinput" /></li>
+            <li><label>最小库存数量</label><input id="min" name="" type="text"
+                                          class="scinput" /></li>
+            <li><label>最大库存数量</label><input id="max" name="" type="text"
+                                          class="scinput" /></li>
+
+            <li><label>&nbsp;</label><input name="" type="button" class="scbtn" value="查询" onclick="findProduct()"/></li>
+
+        </ul>
+    </form>
+
+    <table class="table" id="productListDiv">
+        <thead>
+        <tr>
+            <th>编号<span class="sort"><img src="./images/px.gif" /></span></th>
+
+            <th>产品编号</th>
+            <th>产品名称</th>
+            <th>库存数量</th>
+            <th>采购在途数</th>
+            <th>预销售数</th>
+
+        </thead>
+        <tbody id="tableBody"></tbody>
+    </table>
+    <div>
+        <ul id="page"></ul>
+    </div>
+    <script id="productQueryListTemplate" type="text/html">
+        {{each data}}
+        <tr>
+            <td>{{$index+1}}</td>
+            <td><a onclick="findStockRecord('{{$value.productCode}}')">{{$value.productCode}}</a></td>
+            <td>{{$value.name}}</td>
+            <td>{{$value.num}}</td>
+            <td>{{$value.poNum}}</td>
+            <td>{{$value.soNum}}</td>
+        </tr>
+        {{/each}}
+    </script>
+    <script>
+        $(function () {
+            showPage({
+                currentPage: 1,
+                pageSize: 2,
+                url: '/products',
+                templateId: 'productQueryListTemplate',
+                contentId: 'tableBody'
+            })
+        })
+    </script>
+    <script>
+        function findProduct(){
+            var productCode=$("#productCode").val();
+            var name=$("#productName").val();
+           var min=$("#min").val();
+            var max=$("#max").val();
+            var min=$("#min").val();
+            //^[1-9]\d*|0$
+            var flag1 =/^[1-9]\d*|0$/.test(min);
+            var max=$("#max").val();
+            //^[1-9]\d*|0$
+            var flag2 =/^[1-9]\d*|0$/.test(max);
+            var flag3=(min=="");
+            var flag4=(max=="");
+
+            if(flag1==false&&flag3==false){
+                alert("最小值输入有误");
+            }else if(flag2==false&&flag4==false){
+                alert("最大值输入有误");
+            }else if((flag1==true&&flag2==true)||((flag3==true&&flag4==true)||(flag3==true&&flag2==true)||(flag4==true&&flag1==true))) {
+                var data={productCode:productCode,name:name,min:min,max:max};
+                Ajax.post("/products2",data,function (result){
+                    doResult(result,function (){
+                        console.log(result.data);
+                        var table=$("#showQueryTable");
+                        var t="";
+                        for(var i=0;i<result.data.length;i++){
+                            t+="<tr>";
+                            t+="<td>"+result.data[i].productCode+"</td>";
+                            t+="<td>"+result.data[i].name+"</td>";
+                            t+="<td>"+result.data[i].num+"</td>";
+                            t+="<td>"+result.data[i].poNum+"</td>";
+                            t+="<td>"+result.data[i].soNum+"</td>";
+                            t+="</tr>";
+                        }
+                        table.append(t);
+
+                    })
+                })
+            }
+
+
+
+
+
+
+            Ajax.getHtml('/showQueryProduct.html', function (html) {
+                layer.open({
+                    type: 1,
+                    title: '查询结果',
+                    area: ['1500px','500px'],
+                    content: html,
+                    btn: ['确认'],
+                    yes: function () {
+                        layer.closeAll();
+                    }
+                })
+            })
+
+        }
+    </script>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

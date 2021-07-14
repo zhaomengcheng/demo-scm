@@ -1,0 +1,76 @@
+<!--<button class="btn btn-primary" type="button" onclick="addPomain()">新增</button>-->
+
+<div class="rightinfo">
+    <div class="itab" href="#tab">
+        <ul>
+            <li><a    onclick="Go(this)">货到付款</a></li>
+            <li><a class="selected" onclick="Go(this)">款到发货</a></li>
+            <li><a  onclick="Go(this)">预付款发货</a></li>
+        </ul>
+    </div>
+</div>
+<table class="table" id="pomainListDiv">
+    <thead>
+    <tr>
+        <th>编号<span class="sort"><img src="./images/px.gif" /></span></th>
+        <th>采购单编号</th>
+        <th>创建时间</th>
+        <th>供应商名称</th>
+        <th>创建用户</th>
+        <th>附加费用</th>
+        <th>采购产品总价</th>
+        <th>采购单总价格</th>
+        <th>付款方式</th>
+        <th>处理状态</th>
+        <th>操作</th>
+
+    </thead>
+    <tbody id="tableBody"></tbody>
+</table>
+<div>
+    <ul id="page"></ul>
+</div>
+<script id="pomainEndListTemplate" type="text/html">
+    {{each data}}
+    <tr>
+        <td>{{$index+1}}</td>
+        <td>{{$value.poId}}</td>
+        <td>{{$value.createTime}}</td>
+        <td>{{$value.name}}</td>
+        <td>{{$value.account}}</td>
+        <td>{{$value.tipFee}}</td>
+        <td>{{$value.productTotal}}</td>
+        <td>{{$value.poTotal}}</td>
+        <td>{{$value.payType}}</td>
+        <!--            <td>{{$value.status}}</td>-->
+        {{if $value.status==1}}
+        <td>新增</td>
+        {{/if}}
+        {{if $value.status==2}}
+        <td>已收货</td>
+        {{/if}}
+        {{if $value.status==3}}
+        <td>已付款</td>
+        {{/if}}
+        {{if $value.status==4}}
+        <td>已了结</td>
+        {{/if}}
+        {{if $value.status==5}}
+        <td>已预付</td>
+        {{/if}}
+        <td><input type="button" id="endPomain" value="了结"  onclick="endPomain('{{$value.poId}}')"/>
+        </td>
+    </tr>
+    {{/each}}
+</script>
+<script>
+    $(function () {
+        showPage({
+            currentPage: 1,
+            pageSize: 2,
+            url: '/pomainsEnd2',
+            templateId: 'pomainEndListTemplate',
+            contentId: 'tableBody'
+        })
+    })
+</script>
